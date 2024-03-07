@@ -35,6 +35,7 @@ const orderJoiSchema = Joi.object({
 });
 
 const orderSchema = new mongoose.Schema({
+    createdAt: { type: Date, default: new Date() },
     customer: {
         name: String,
         email: String,
