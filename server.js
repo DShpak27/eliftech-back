@@ -72,7 +72,7 @@ const Order = mongoose.model("Order", orderSchema);
 const Price = mongoose.model("Price", priceSchema);
 const Pharm = mongoose.model("Pharm", pharmSchema);
 
-app.get("orders", async (_, res) => {
+app.get("/orders", async (_, res) => {
     try {
         const orders = await Order.find();
         res.json(orders);
