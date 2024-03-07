@@ -11,7 +11,7 @@ const port = process.env.PORT || 3000;
 
 mongoose.connect(process.env.CONNECTION_STRING);
 
-const orderSchema = Joi.object({
+const orderJoiSchema = Joi.object({
     customer: Joi.object({
         name: Joi.string().required(),
         email: Joi.string().email().required(),
@@ -34,28 +34,25 @@ const orderSchema = Joi.object({
         .required(),
 });
 
-const Order = mongoose.model(
-    "Order",
-    new mongoose.Schema({
-        customer: {
+const orderSchema = new mongoose.Schema({
+    customer: {
+        name: String,
+        email: String,
+        phone: String,
+        address: String,
+    },
+    items: [
+        {
+            id: String,
             name: String,
-            email: String,
-            phone: String,
-            address: String,
+            price: Number,
+            quantity: Number,
+            imageUrl: String,
+            storeId: String,
+            store: String,
         },
-        items: [
-            {
-                id: String,
-                name: String,
-                price: Number,
-                quantity: Number,
-                imageUrl: String,
-                storeId: String,
-                store: String,
-            },
-        ],
-    })
-);
+    ],
+});
 
 const pharmSchema = new mongoose.Schema({
     id: { type: String, required: true },
@@ -70,9 +67,23 @@ const priceSchema = new mongoose.Schema({
     price: { type: Number, required: true },
     shopId: { type: Number, required: true },
 });
+
+const Order = mongoose.model("Order", orderSchema);
+const Price = mongoose.model("Price", priceSchema);
+const Pharm = mongoose.model("Pharm", pharmSchema);
+
+app.get("orders", async (_, res) => {
+    try {
+        const orders = await Order.find();
+        res.json(orders);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 app.post("/orders", async (req, res) => {
     try {
-        const validationResult = orderSchema.validate(req.body);
+        const validationResult = orderJoiSchema.validate(req.body);
 
         if (validationResult.error) {
             return res.status(400).json({ error: validationResult.error.details[0].message });
@@ -87,10 +98,7 @@ app.post("/orders", async (req, res) => {
     }
 });
 
-const Price = mongoose.model("Price", priceSchema);
-const Pharm = mongoose.model("Pharm", pharmSchema);
-
-app.get("/pharms", async (req, res) => {
+app.get("/pharms", async (_, res) => {
     try {
         const pharms = await Pharm.find();
         res.json(pharms);
