@@ -75,7 +75,8 @@ const Pharm = mongoose.model("Pharm", pharmSchema);
 
 app.get("/orders", async (req, res) => {
     try {
-        const orders = await Order.find({ "customer.email": req.body.email });
+        const email = req.query.email;
+        const orders = await Order.find({ "customer.email": email });
         res.json(orders);
     } catch (error) {
         res.status(500).json({ error: error.message });
