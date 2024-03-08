@@ -12,6 +12,8 @@ const port = process.env.PORT || 3000;
 mongoose.connect(process.env.CONNECTION_STRING);
 
 const orderJoiSchema = Joi.object({
+    totalPrice: Number,
+    totalAssortment: Number,
     customer: Joi.object({
         name: Joi.string().required(),
         email: Joi.string().email().required(),
