@@ -12,8 +12,7 @@ const port = process.env.PORT || 3000;
 mongoose.connect(process.env.CONNECTION_STRING);
 
 const orderJoiSchema = Joi.object({
-    totalPrice: Number,
-    totalAssortment: Number,
+    totalPrice: Joi.number().required(),
     customer: Joi.object({
         name: Joi.string().required(),
         email: Joi.string().email().required(),
@@ -37,6 +36,7 @@ const orderJoiSchema = Joi.object({
 });
 
 const orderSchema = new mongoose.Schema({
+    totalPrice: Number,
     createdAt: { type: Date, default: new Date() },
     customer: {
         name: String,
